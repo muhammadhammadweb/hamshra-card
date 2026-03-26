@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Hammad & Nashra — Hamshra</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Nunito:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --cream: #fdf8f2;
+    --blush: #e8c9b0;
+    --sage: #8aad9f;
+    --forest: #3d6b5e;
+    --dust: #c4a882;
+    --ink: #2c2416;
+    --warm: #f5ede0;
+    --gold: #c9a84c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #eee8df;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    width: 380px;
+    background: var(--cream);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow:
+      0 2px 4px rgba(0,0,0,0.04),
+      0 12px 40px rgba(0,0,0,0.10),
+      0 40px 80px rgba(0,0,0,0.08);
+    position: relative;
+  }
+
+  /* ── PHOTO SECTION ── */
+  .photo-section {
+    position: relative;
+    width: 100%;
+    height: 280px;
+    overflow: hidden;
+  }
+
+  .photo-section img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+  }
+
+  /* Gradient fade bottom */
+  .photo-section::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 120px;
+    background: linear-gradient(to bottom, transparent, var(--cream));
+  }
+
+  /* Floating name badge over photo */
+  .photo-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    z-index: 2;
+    text-align: center;
+    padding-bottom: 12px;
+  }
+
+  .names-big {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: var(--forest);
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+
+  .names-big .amp {
+    font-style: italic;
+    color: var(--dust);
+  }
+
+  .hamshra-tag {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--dust);
+    letter-spacing: 0.18em;
+    margin-top: 3px;
+  }
+
+  /* ── BODY ── */
+  .card-body {
+    padding: 0 28px 28px;
+  }
+
+  /* Thin gold divider */
+  .gold-line {
+    width: 50px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 20px;
+  }
+
+  /* ── QR ROW ── */
+  .qr-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: var(--warm);
+    border: 1px solid var(--blush);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 18px;
+  }
+
+  .qr-frame {
+    flex-shrink: 0;
+    width: 100px;
+    height: 100px;
+    background: #fff;
+    border-radius: 10px;
+    border: 1.5px solid var(--blush);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .qr-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* Corner decorations on QR frame */
+  .qr-frame::before,
+  .qr-frame::after {
+    content: '';
+    position: absolute;
+    width: 12px; height: 12px;
+    border-color: var(--gold);
+    border-style: solid;
+  }
+  .qr-frame::before {
+    top: 4px; left: 4px;
+    border-width: 2px 0 0 2px;
+  }
+  .qr-frame::after {
+    bottom: 4px; right: 4px;
+    border-width: 0 2px 2px 0;
+  }
+
+  .qr-info {
+    flex: 1;
+  }
+
+  .qr-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 6px;
+  }
+
+  .qr-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    color: var(--forest);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  .qr-desc {
+    font-size: 0.72rem;
+    color: var(--dust);
+    line-height: 1.5;
+  }
+
+  /* QR error fallback */
+  .qr-fallback {
+    font-size: 0.55rem;
+    color: #999;
+    text-align: center;
+    padding: 4px;
+    display: none;
+  }
+
+  /* ── PROMISES ROW ── */
+  .promises {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .promise-pill {
+    background: var(--warm);
+    border: 1px solid var(--blush);
+    border-radius: 10px;
+    padding: 12px 10px;
+    text-align: center;
+  }
+
+  .promise-icon { font-size: 1.1rem; margin-bottom: 4px; }
+
+  .promise-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.78rem;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+
+  /* ── FOOTER ── */
+  .card-footer {
+    text-align: center;
+    padding-top: 4px;
+    border-top: 1px solid var(--blush);
+    margin-top: 4px;
+  }
+
+  .engaged-badge {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .footer-names {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--dust);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 420px) {
+    .card { width: 100%; max-width: 380px; }
+    .photo-section { height: 240px; }
+    .names-big { font-size: 1.9rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- Photo Section -->
+  <div class="photo-section">
+    <img
+      src="https://raw.githubusercontent.com/muhammadhammadweb/hamshra-card/main/img3_river.png.png"
+      alt="Hammad & Nashra"
+      onerror="this.style.background='linear-gradient(to bottom, #8aad9f, #3d6b5e)'; this.style.minHeight='280px';"
+    />
+    <div class="photo-overlay">
+      <div class="names-big">Hammad <span class="amp">&amp;</span> Nashra</div>
+      <div class="hamshra-tag">✦ Hamshra ✦</div>
+    </div>
+  </div>
+
+  <!-- Card Body -->
+  <div class="card-body">
+
+    <div class="gold-line"></div>
+
+    <!-- QR Row -->
+    <div class="qr-row">
+      <div class="qr-frame">
+        <img
+          src="https://raw.githubusercontent.com/muhammadhammadweb/hamshra-card/main/qr.png"
+          alt="QR Code — Hamshra"
+          id="qr-img"
+          onload="document.getElementById('qr-fb').style.display='none';"
+          onerror="
+            this.style.display='none';
+            document.getElementById('qr-fb').style.display='block';
+          "
+        />
+        <div class="qr-fallback" id="qr-fb">
+          QR load<br>na hua —<br>internet check karein
+        </div>
+      </div>
+      <div class="qr-info">
+        <div class="qr-label">Scan karo</div>
+        <div class="qr-title">Hamari poori<br>kahani dekhein</div>
+        <div class="qr-desc">October se March tak —<br>chhe mahinon ka safar ✦</div>
+      </div>
+    </div>
+
+    <!-- Promises -->
+    <div class="promises">
+      <div class="promise-pill">
+        <div class="promise-icon">🌿</div>
+        <div class="promise-text">Har larai ke baad bhi, tumhara</div>
+      </div>
+      <div class="promise-pill">
+        <div class="promise-icon">🌙</div>
+        <div class="promise-text">Ghanton ki baatein, hamesha</div>
+      </div>
+      <div class="promise-pill">
+        <div class="promise-icon">☁️</div>
+        <div class="promise-text">Tumhari har addat, pyaari</div>
+      </div>
+      <div class="promise-pill">
+        <div class="promise-icon">✨</div>
+        <div class="promise-text">Poori zindagi, saath</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="card-footer">
+      <span class="engaged-badge">Engaged • 2026</span>
+      <div class="footer-names">Hammad + Nashra — hamesha ke liye</div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
