@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Hammad & Nashra — Hamshra</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Nunito:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --cream: #fdf8f2;
+    --blush: #e8c9b0;
+    --sage: #8aad9f;
+    --forest: #3d6b5e;
+    --dust: #c4a882;
+    --ink: #2c2416;
+    --warm: #f5ede0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  .petals-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #opening {
+    position: fixed;
+    inset: 0;
+    background: var(--cream);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    transition: opacity 1.2s ease, visibility 1.2s ease;
+  }
+  #opening.hidden { opacity: 0; visibility: hidden; }
+
+  .envelope {
+    width: 200px;
+    height: 140px;
+    position: relative;
+    cursor: pointer;
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-12px); } }
+
+  .env-body {
+    width: 120px; height: 80px;
+    background: var(--warm);
+    border: 2px solid var(--dust);
+    border-radius: 4px;
+    position: absolute;
+    bottom: 0;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  }
+  .env-flap {
+    width: 0; height: 0;
+    border-left: 60px solid transparent;
+    border-right: 60px solid transparent;
+    border-top: 46px solid var(--blush);
+    position: absolute;
+    top: 0;
+    transition: transform 0.6s ease;
+    transform-origin: top center;
+  }
+  .envelope:hover .env-flap { transform: rotateX(180deg); }
+
+  .open-hint {
+    margin-top: 32px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    color: var(--dust);
+    letter-spacing: 0.08em;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:0.6;} 50%{opacity:1;} }
+
+  #main {
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+  }
+  #main.visible { opacity: 1; }
+
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 24px;
+    position: relative;
+  }
+
+  .names-container { position: relative; margin-bottom: 16px; }
+
+  .names {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.5rem, 12vw, 8rem);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--forest);
+    opacity: 0;
+    transform: translateY(30px);
+    animation: riseUp 1.2s ease forwards 0.5s;
+  }
+  .amp { font-style: italic; color: var(--dust); font-size: 0.85em; }
+
+  .combo-tag {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    color: var(--dust);
+    letter-spacing: 0.15em;
+    margin-top: 8px;
+    opacity: 0;
+    animation: riseUp 1.2s ease forwards 0.9s;
+  }
+
+  .hero-sub {
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    color: var(--sage);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 24px;
+    opacity: 0;
+    animation: riseUp 1.2s ease forwards 1.3s;
+  }
+
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--dust), transparent);
+    margin: 32px auto;
+    opacity: 0;
+    animation: riseUp 1s ease forwards 1.6s;
+  }
+
+  @keyframes riseUp { to { opacity: 1; transform: translateY(0); } }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--dust);
+    text-transform: uppercase;
+    opacity: 0;
+    animation: riseUp 1s ease forwards 2.2s, bounce 2s ease-in-out 3s infinite;
+  }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0);} 50%{transform:translateX(-50%) translateY(6px);} }
+
+  section {
+    padding: clamp(48px, 8vw, 80px) clamp(20px, 5vw, 24px);
+    max-width: 720px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .section-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 300;
+    color: var(--forest);
+    margin-bottom: 32px;
+    line-height: 1.2;
+  }
+  .section-title em { font-style: italic; color: var(--dust); }
+
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px; top: 8px; bottom: 8px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--blush), var(--sage), var(--blush));
+  }
+
+  .t-item {
+    position: relative;
+    margin-bottom: 40px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.8s ease;
+  }
+  .t-item.visible { opacity: 1; transform: translateX(0); }
+
+  .t-dot {
+    position: absolute;
+    left: -29px; top: 6px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--blush);
+    border: 2px solid var(--dust);
+  }
+
+  .t-month {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 6px;
+  }
+
+  .t-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    line-height: 1.7;
+    color: var(--ink);
+    font-weight: 300;
+  }
+  .t-text em { font-style: italic; color: var(--forest); }
+
+  .letter-box {
+    background: var(--warm);
+    border: 1px solid var(--blush);
+    border-radius: 12px;
+    padding: clamp(28px, 6vw, 48px) clamp(20px, 5vw, 40px);
+    position: relative;
+    box-shadow: 0 4px 40px rgba(0,0,0,0.04);
+  }
+  .letter-box::before {
+    content: '"';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 8rem;
+    color: var(--blush);
+    position: absolute;
+    top: -20px; left: 20px;
+    line-height: 1;
+    opacity: 0.6;
+  }
+
+  #typewriter {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    line-height: 1.9;
+    color: var(--ink);
+    font-weight: 300;
+    min-height: 200px;
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.1em;
+    background: var(--dust);
+    vertical-align: text-bottom;
+    animation: blink 0.9s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+  .letter-sign {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.4rem;
+    color: var(--forest);
+    text-align: right;
+    margin-top: 32px;
+  }
+
+  .promise-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 8px;
+  }
+  @media(max-width:500px){ .promise-grid { grid-template-columns: 1fr; } }
+
+  .p-card {
+    background: var(--warm);
+    border: 1px solid var(--blush);
+    border-radius: 10px;
+    padding: 24px 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.7s ease;
+  }
+  .p-card.visible { opacity: 1; transform: translateY(0); }
+  .p-icon { font-size: 1.5rem; margin-bottom: 10px; }
+  .p-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(0.9rem, 2vw, 1.05rem);
+    line-height: 1.6;
+    color: var(--ink);
+  }
+
+  .final-section {
+    text-align: center;
+    padding: clamp(60px, 10vw, 100px) 24px;
+    background: linear-gradient(to bottom, var(--cream), var(--warm));
+  }
+
+  .hamra {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(4rem, 15vw, 10rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--forest);
+    line-height: 1;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .hamra.visible { opacity: 1; transform: scale(1); }
+
+  .final-line {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    font-style: italic;
+    color: var(--dust);
+    margin-top: 16px;
+    opacity: 0;
+    transition: opacity 1s ease 0.6s;
+  }
+  .final-line.visible { opacity: 1; }
+
+  .engagement-badge {
+    display: inline-block;
+    margin-top: 40px;
+    padding: 14px 36px;
+    border: 1px solid var(--dust);
+    border-radius: 100px;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--forest);
+    opacity: 0;
+    transition: opacity 1s ease 1s;
+  }
+  .engagement-badge.visible { opacity: 1; }
+
+  .gallery-section {
+    padding: clamp(40px, 8vw, 80px) clamp(16px, 4vw, 24px);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 28px;
+    margin-bottom: 14px;
+  }
+  @media(max-width:500px){ .gallery-grid { grid-template-columns: 1fr; } }
+
+  .gallery-item {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.10);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s ease;
+    aspect-ratio: 4 / 3;
+  }
+  .gallery-item.visible { opacity: 1; transform: translateY(0); }
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+  .gallery-item:hover img { transform: scale(1.03); }
+
+  .gallery-caption {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--dust);
+    margin-top: 20px;
+    letter-spacing: 0.08em;
+  }
+
+  #music-btn {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    z-index: 200;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--warm);
+    border: 1px solid var(--blush);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: transform 0.2s;
+  }
+  #music-btn:hover { transform: scale(1.1); }
+</style>
+</head>
+<body>
+
+<canvas class="petals-canvas" id="petals"></canvas>
+<button id="music-btn" title="Toggle music">🎵</button>
+<audio id="bg-music" loop>
+  <source src="Samar_Jafri_-_Main_Rahun__From_Parwarish___Original_Motion_Picture_Soundtrack.mp3" type="audio/mpeg"/>
+</audio>
+
+<div id="opening">
+  <div class="envelope" id="env-btn">
+    <div class="env-flap"></div>
+    <div class="env-body">
+      <svg style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%)" width="40" height="20" viewBox="0 0 40 20">
+        <text x="50%" y="15" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="11" fill="#c4a882" font-style="italic">Hamshra</text>
+      </svg>
+    </div>
+  </div>
+  <p class="open-hint">tap to open ✦</p>
+</div>
+
+<div id="main">
+
+  <div class="hero">
+    <p class="hero-sub">A Story of Six Months</p>
+    <div class="divider"></div>
+    <div class="names-container">
+      <h1 class="names" style="white-space:nowrap;font-size:clamp(2rem,9vw,6rem);">Hammad <span class="amp">&amp;</span> Nashra</h1>
+    </div>
+    <p class="combo-tag">✦ Hamshra ✦</p>
+    <p class="scroll-hint">scroll ↓</p>
+  </div>
+
+  <section class="gallery-section">
+    <span class="section-label">Our World</span>
+    <h2 class="section-title">Together, <em>Always</em></h2>
+    <div class="gallery-grid">
+      <div class="gallery-item">
+        <img src="https://raw.githubusercontent.com/muhammadhammadweb/hamshra-card/main/img3_river.png.png" alt="By the River"/>
+      </div>
+      <div class="gallery-item">
+        <img src="https://raw.githubusercontent.com/muhammadhammadweb/hamshra-card/main/img5_sunset.png.png" alt="Sunset"/>
+      </div>
+      <div class="gallery-item">
+        <img src="https://raw.githubusercontent.com/muhammadhammadweb/hamshra-card/main/img1_dance.png.png" alt="Dancing"/>
+      </div>
+    </div>
+    <p class="gallery-caption">✦ Hamshra — Hammad &amp; Nashra ✦</p>
+  </section>
+
+  <section>
+    <span class="section-label">How It Began</span>
+    <h2 class="section-title">From Then, <em>Until Now</em></h2>
+    <div class="timeline">
+      <div class="t-item">
+        <div class="t-dot"></div>
+        <p class="t-month">October 2025</p>
+        <p class="t-text">A small Instagram request — and everything changed. <em>A follow, a number, and hours of conversations</em> that felt like they'd never end.</p>
+      </div>
+      <div class="t-item">
+        <div class="t-dot"></div>
+        <p class="t-month">November 2025</p>
+        <p class="t-text">One topic led to another. <em>Two people slowly learning each other</em> — their dreams, their habits, their silences.</p>
+      </div>
+      <div class="t-item">
+        <div class="t-dot"></div>
+        <p class="t-month">December 2025</p>
+        <p class="t-text">The first argument — and the first realization that <em>you only get this upset with someone who truly matters.</em></p>
+      </div>
+      <div class="t-item">
+        <div class="t-dot"></div>
+        <p class="t-month">January 2026</p>
+        <p class="t-text">After the storm came a clarity — <em>this connection was never a coincidence.</em> It was always meant to be.</p>
+      </div>
+      <div class="t-item">
+        <div class="t-dot"></div>
+        <p class="t-month">February 2026</p>
+        <p class="t-text">Every conversation carried a reflection of the other. <em>The closer they looked, the closer they became.</em> This was something rare.</p>
+      </div>
+      <div class="t-item">
+        <div class="t-dot"></div>
+        <p class="t-month">March 2026 ✦</p>
+        <p class="t-text"><em>Engagement.</em> A new and golden chapter — the beginning of forever, together.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="section-label">A Letter</span>
+    <h2 class="section-title">Words from <em>the Heart</em></h2>
+    <div class="letter-box">
+      <p id="typewriter"></p>
+      <p class="letter-sign">— Yours, Hammad</p>
+    </div>
+  </section>
+
+  <section>
+    <span class="section-label">Promises</span>
+    <h2 class="section-title">What I <em>Promise</em> You</h2>
+    <div class="promise-grid">
+      <div class="p-card">
+        <div class="p-icon">🌿</div>
+        <p class="p-text">Even after every argument — I will always come back, because you are not a moment, you are my life.</p>
+      </div>
+      <div class="p-card">
+        <div class="p-icon">🌙</div>
+        <p class="p-text">Those late nights we talked for hours? That was only the beginning. More nights, more beautiful, are still ahead.</p>
+      </div>
+      <div class="p-card">
+        <div class="p-icon">☁️</div>
+        <p class="p-text">Every little thing about you — liked or not — will always give me a new reason to love you more.</p>
+      </div>
+      <div class="p-card">
+        <div class="p-icon">✨</div>
+        <p class="p-text">Inshallah, every day ahead will be better than these six months — lived fully, together.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="gallery-section">
+    <span class="section-label">Our Dreams</span>
+    <h2 class="section-title">A Glimpse of <em>What Awaits</em></h2>
+    <div class="gallery-grid">
+      <div class="gallery-item">
+        <img src="https://raw.githubusercontent.com/muhammadhammadweb/hamshra-card/main/img1_dance.png.png" alt="Dancing together"/>
+      </div>
+      <div class="gallery-item">
+        <img src="https://raw.githubusercontent.com/muhammadhammadweb/hamshra-card/main/img5_sunset.png.png" alt="Walking in flowers"/>
+      </div>
+      <div class="gallery-item">
+        <img src="https://raw.githubusercontent.com/muhammadhammadweb/hamshra-card/main/img3_river.png.png" alt="Golden moments"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="final-section">
+    <p class="hamra" id="hamra-text">Hamshra</p>
+    <p class="final-line" id="final-line">Hammad + Nashra — forever and always ✦</p>
+    <div class="engagement-badge" id="eng-badge">Engaged &nbsp;·&nbsp; 2026</div>
+  </div>
+
+</div>
+
+<script>
+const canvas = document.getElementById('petals');
+const ctx = canvas.getContext('2d');
+let W, H, petals = [];
+
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+
+function Petal() {
+  this.reset = function() {
+    this.x = Math.random() * W;
+    this.y = -20;
+    this.size = 4 + Math.random() * 8;
+    this.speed = 0.4 + Math.random() * 0.8;
+    this.wind = (Math.random() - 0.5) * 0.5;
+    this.rot = Math.random() * Math.PI * 2;
+    this.rotSpeed = (Math.random() - 0.5) * 0.02;
+    this.alpha = 0.3 + Math.random() * 0.4;
+    this.color = Math.random() > 0.5 ? '#e8c9b0' : '#8aad9f';
+  };
+  this.reset();
+  this.y = Math.random() * H;
+}
+for (let i = 0; i < 35; i++) petals.push(new Petal());
+
+function animatePetals() {
+  ctx.clearRect(0, 0, W, H);
+  petals.forEach(p => {
+    p.y += p.speed; p.x += p.wind; p.rot += p.rotSpeed;
+    if (p.y > H + 20) p.reset();
+    ctx.save();
+    ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+    ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, p.size, p.size * 0.5, 0, 0, Math.PI * 2);
+    ctx.fill(); ctx.restore();
+  });
+  requestAnimationFrame(animatePetals);
+}
+animatePetals();
+
+const opening = document.getElementById('opening');
+const main    = document.getElementById('main');
+const envBtn  = document.getElementById('env-btn');
+const audio   = document.getElementById('bg-music');
+const musicBtn= document.getElementById('music-btn');
+let playing = false;
+
+envBtn.addEventListener('click', () => {
+  opening.classList.add('hidden');
+  main.classList.add('visible');
+  audio.currentTime = 19;
+  audio.play().then(() => { playing = true; musicBtn.textContent = '🔇'; }).catch(() => {});
+});
+
+musicBtn.addEventListener('click', () => {
+  if (playing) { audio.pause(); musicBtn.textContent = '🎵'; playing = false; }
+  else         { audio.play();  musicBtn.textContent = '🔇'; playing = true;  }
+});
+
+const letterText = `Nashra,
+
+Do you remember that evening in October? One small Instagram request — and I had no idea that single tap would change the entire direction of my life.
+
+We talked for hours. Topics turned into more topics, laughter into seriousness, arguments back into laughter. Every single time we fought, every time things felt hard — one thing became clearer: you are not just a contact in my phone. You are the person I cannot stop thinking about.
+
+These six months were not just time. They are my most precious memories. And today, more than anything, I want every day ahead to feel exactly like this — with you, close to you.
+
+You are my prayer answered, Nashra. Please stay, always.`;
+
+let typeIdx = 0, typeStarted = false;
+const tw = document.getElementById('typewriter');
+tw.innerHTML = '<span class="cursor"></span>';
+
+function typeLetter() {
+  if (typeIdx < letterText.length) {
+    const cursor = tw.querySelector('.cursor');
+    const char = letterText[typeIdx];
+    if (char === '\n') { tw.insertBefore(document.createElement('br'), cursor); }
+    else { tw.insertBefore(document.createTextNode(char), cursor); }
+    typeIdx++;
+    setTimeout(typeLetter, char === '\n' ? 60 : 28);
+  }
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      if (e.target.id === 'typewriter' && !typeStarted) {
+        typeStarted = true;
+        setTimeout(typeLetter, 400);
+      }
+    }
+  });
+}, { threshold: 0.2 });
+
+document.querySelectorAll('.t-item, .p-card, #hamra-text, #final-line, #eng-badge, #typewriter, .gallery-item').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
