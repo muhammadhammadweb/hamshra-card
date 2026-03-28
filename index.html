@@ -554,6 +554,7 @@
 
 <div id="main">
 
+  <!-- ── HERO (commented out) ──
   <div class="hero">
     <p class="hero-sub">A story of six months</p>
     <div class="divider"></div>
@@ -563,15 +564,12 @@
     <p class="combo-tag">✦ Hamshra ✦</p>
     <p class="scroll-hint">scroll ↓</p>
   </div>
+  -->
 
-
+  <!-- ── GALLERY SECTION (active) ── -->
   <section class="gallery-section">
     <span class="section-label">Our World</span>
     <h2 class="section-title">Together <em>As One</em></h2>
-
-    <!-- <div class="gallery-hero" id="g-hero">
-      <img src="https://raw.githubusercontent.com/muhammadhammadweb/hamshra-card/main/img1_dance.png.png" alt="Dance">
-    </div> -->
 
     <div class="gallery-grid">
       <div class="gallery-item">
@@ -583,13 +581,11 @@
       <div class="gallery-item">
         <img src="https://raw.githubusercontent.com/muhammadhammadweb/hamshra-card/main/img1_dance.png.png" alt="Dance Grid">
       </div>
-      <!-- <div class="gallery-item">
-        <img src="https://raw.githubusercontent.com/muhammadhammadweb/hamshra-card/main/img1_dance.png.png" alt="Dance Grid">
-      </div> -->
     </div>
     <p class="gallery-caption">✦ Hamshra — Hammad & Nashra ✦</p>
   </section>
 
+  <!-- ── TIMELINE (commented out) ──
   <section>
     <span class="section-label">How it began</span>
     <h2 class="section-title">From October, <em>Until Now</em></h2>
@@ -626,7 +622,9 @@
       </div>
     </div>
   </section>
+  -->
 
+  <!-- ── LETTER (commented out) ──
   <section>
     <span class="section-label">From Hammad</span>
     <h2 class="section-title">A <em>Letter</em></h2>
@@ -635,7 +633,9 @@
       <p class="letter-sign">— Tumhara Hammad</p>
     </div>
   </section>
+  -->
 
+  <!-- ── PROMISES (commented out) ──
   <section>
     <span class="section-label">Wada</span>
     <h2 class="section-title">What I <em>Promise</em> You</h2>  
@@ -658,8 +658,9 @@
       </div>
     </div>
   </section>
+  -->
 
-
+  <!-- ── SECOND GALLERY (commented out) ──
   <div class="gallery-section">
     <span class="section-label">Our World</span>
     <h2 class="section-title" style="max-width:720px;margin:0 auto 0;">A Glimpse <em>of Our Dreams</em></h2> 
@@ -678,12 +679,15 @@
       </div>
     </div>
   </div>
+  -->
 
+  <!-- ── FINAL SECTION (commented out) ──
   <div class="final-section">
     <p class="hamra" id="hamra-text">Hamshra</p>
     <p class="final-line" id="final-line">Hammad + Nashra — Forever and Always ✦</p>
     <div class="engagement-badge" id="eng-badge">Engaged • 2026</div>
   </div>
+  -->
 
 </div>
 
@@ -743,9 +747,7 @@ function animatePetals() {
 }
 animatePetals();
 
-
-
-// ── Music & Opening Logic (Merged to fix errors) ──
+// ── Music & Opening Logic ──
 const opening = document.getElementById('opening');
 const main = document.getElementById('main');
 const envBtn = document.getElementById('env-btn');
@@ -753,12 +755,10 @@ const audio = document.getElementById('bg-music');
 const musicBtn = document.getElementById('music-btn');
 let playing = false; 
 
-// Envelope Click - Start Experience
 envBtn.addEventListener('click', () => {
   opening.classList.add('hidden');
   main.classList.add('visible');
   
-  // Set to 7 seconds
   audio.currentTime = 6;
   
   audio.play().then(() => {
@@ -769,7 +769,6 @@ envBtn.addEventListener('click', () => {
   });
 });
 
-// Music Toggle Button (🎵/🔇)
 musicBtn.addEventListener('click', () => {
   if (playing) { 
     audio.pause(); 
@@ -782,53 +781,27 @@ musicBtn.addEventListener('click', () => {
   }
 });
 
-
-// ── Typewriter ──
-const letterText = `Nashra,
-
-Woh October ki shaam yaad hai? Ek chhoti si Instagram request — mujhe nahi pata tha us waqt ke us ek tap ne meri poori zindagi ka rukh badal dega.
-
-Hum ne baatein ki — ghanton, topics se topics, hansi se seriousness, arguments se again hansi. Har baar jab hum ne lara, har baar jab gussa hua — mujhe ek cheez aur clearly samajh ayi: tum mere liye sirf ek contact nahi ho. Tum woh insaan ho jiske baare mein main sochna band nahi kar sakta.
-
-Yeh 6 mahine sirf waqt nahi tha — yeh meri sabse pyaari memories hain. Aur aaj, is din, main chahta hun ke puri zindagi aise hi guzare — tumhare saath, tumhare qareeb.
-
-Tum meri dua ho, Nashra. Hamesha rahna.`;
-
-let typeIdx = 0;
-let typeStarted = false;
-const tw = document.getElementById('typewriter');
-tw.innerHTML = '<span class="cursor"></span>';
-
-function typeLetter() {
-  if (typeIdx < letterText.length) {
-    const cursor = tw.querySelector('.cursor');
-    const char = letterText[typeIdx];
-    const textNode = document.createTextNode(char === '\n' ? '' : char);
-    if (char === '\n') {
-      tw.insertBefore(document.createElement('br'), cursor);
-    } else {
-      tw.insertBefore(textNode, cursor);
-    }
-    typeIdx++;
-    setTimeout(typeLetter, char === '\n' ? 60 : 28);
-  }
-}
-
 // ── Intersection Observer ──
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       e.target.classList.add('visible');
-      if (e.target.classList.contains('gallery-hero') || e.target.classList.contains('gallery-item')) { e.target.classList.add('visible'); }
-      if (e.target.id === 'typewriter' && !typeStarted) {
-        typeStarted = true;
-        setTimeout(typeLetter, 400);
-      }
     }
   });
 }, { threshold: 0.2 });
 
-document.querySelectorAll('.t-item, .p-card, #hamra-text, #final-line, #eng-badge, #typewriter, .gallery-item').forEach(el => observer.observe(el));
+document.querySelectorAll('.gallery-item').forEach(el => observer.observe(el));
+
+/* ── COMMENTED OUT (typewriter, timeline, promise cards, final section observers) ──
+const letterText = `Nashra, ...`;
+let typeIdx = 0;
+let typeStarted = false;
+const tw = document.getElementById('typewriter');
+tw.innerHTML = '<span class="cursor"></span>';
+function typeLetter() { ... }
+
+document.querySelectorAll('.t-item, .p-card, #hamra-text, #final-line, #eng-badge, #typewriter').forEach(el => observer.observe(el));
+*/
 </script>
 </body>
 </html>
